@@ -1,0 +1,13 @@
+---
+
+- include: install.yml
+  tags:
+    - nagios
+    - nagios_client
+    - nagios_client_install
+
+- include: config.yml
+  tags:
+    - nagios
+    - nagios_client
+    - nagios_client_config

@@ -1,0 +1,8 @@
+---
+
+nsca_config_password: False     # Must be identical to the NSCA server
+nsca_config_encryption_method: 1
+nsca_scripts_repo_type: git     # git or hg
+nsca_scripts_repo_url: False
+nsca_scripts_repo_dest: /opt/nsca-checks
+nsca_scripts_repo_version: False

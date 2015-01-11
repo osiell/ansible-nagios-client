@@ -1,0 +1,9 @@
+---
+
+- name: Install Nagios plugins and NSCA client
+  apt:  pkg={{ item }}
+        state=installed
+        update_cache=yes
+  with_items:
+      - nagios-plugins
+      - nsca-client
