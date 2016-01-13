@@ -1,28 +1,43 @@
 ---
 
-- name: Configure NSCA client
-  template: src=send_nsca.cfg.j2 dest={{ nsca_config_file }}
-        owner=root group=root mode=0644
-        backup=yes
+# Git
+- name: Clone NSCA client scripts repositories (Git)
+  git:  repo={{ item.repo }}
+        dest={{ item.dest }}
+        version={{ item.version | default('master') }}
+  with_items: nsca_scripts_repo_git
 
-- name: Clone NSCA client scripts repository (Git)
-  git:  repo={{ nsca_scripts_repo_url }}
-        dest={{ nsca_scripts_repo_dest }}
-        version={{ nsca_scripts_repo_version or 'master' }}
-  when: nsca_scripts_repo_type == 'git' and nsca_scripts_repo_url
+- name: Register existing crontab files from repositories (Git)
+  stat: path={{ item.dest }}/{{ item.crontab_src | default('crontab') }}
+  with_items: nsca_scripts_repo_git
+  register: crontab_files_stat_git
 
-- name: Clone NSCA client scripts repository (Mercurial)
-  hg:   repo={{ nsca_scripts_repo_url }}
-        dest={{ nsca_scripts_repo_dest }}
-        revision={{ nsca_scripts_repo_version or 'default' }}
-  when: nsca_scripts_repo_type == 'hg' and nsca_scripts_repo_url
-
-- name: Is there a crontab in the repository?
-  stat: path={{ nsca_scripts_repo_dest }}/crontab
-  register: nsca_crontab_ok
-
-- name: Set the crontab in /etc/cron.d
-  file: src={{ nsca_scripts_repo_dest }}/crontab
-        path=/etc/cron.d/nsca_checks
+- name: Set the crontab files in /etc/cron.d if available (Git)
+  file: src={{ item.0.dest }}/{{ item.0.crontab_src | default('crontab') }}
+        path=/etc/cron.d/{{ item.0.crontab_dest | default('nsca_checks') }}
         state=link
-  when: nsca_crontab_ok.stat.exists
+  with_together:
+      - nsca_scripts_repo_git
+      - crontab_files_stat_git.results
+  when: nsca_scripts_repo_git and item.1.stat.exists
+
+# Mercurial
+- name: Clone NSCA client scripts repositories (Mercurial)
+  hg:   repo={{ item.repo }}
+        dest={{ item.dest }}
+        revision={{ item.version | default('default') }}
+  with_items: nsca_scripts_repo_hg
+
+- name: Register existing crontab files from repositories (Mercurial)
+  stat: path={{ item.dest }}/{{ item.crontab_src | default('crontab') }}
+  with_items: nsca_scripts_repo_hg
+  register: crontab_files_stat_hg
+
+- name: Set the crontab files in /etc/cron.d if available (Mercurial)
+  file: src={{ item.0.dest }}/{{ item.0.crontab_src | default('crontab') }}
+        path=/etc/cron.d/{{ item.0.crontab_dest | default('nsca_checks') }}
+        state=link
+  with_together:
+      - nsca_scripts_repo_hg
+      - crontab_files_stat_hg.results
+  when: nsca_scripts_repo_hg and item.1.stat.exists

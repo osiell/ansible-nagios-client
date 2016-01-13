@@ -2,7 +2,6 @@
 
 nsca_config_password: False     # Must be identical to the NSCA server
 nsca_config_encryption_method: 1
-nsca_scripts_repo_type: git     # git or hg
-nsca_scripts_repo_url: False
-nsca_scripts_repo_dest: /opt/nsca-checks
-nsca_scripts_repo_version: False
+
+nsca_scripts_repo_git: []  # [{repo: REPO, dest: DEST, version: master, 'crontab_src': crontab, 'crontab_dest': nsca_checks}]
+nsca_scripts_repo_hg: []   # [{repo: REPO, dest: DEST, version: default, 'crontab_src': crontab, 'crontab_dest': nsca_checks}]
