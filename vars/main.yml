@@ -1,3 +1,8 @@
 ---
 
+nagios_client_packages:
+    - nagios-plugins
+    - nagios-plugins-contrib
+    - nsca-client
+
 nsca_config_file: /etc/send_nsca.cfg
