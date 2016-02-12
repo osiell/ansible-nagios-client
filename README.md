@@ -31,9 +31,11 @@ is used by each script to send data to the NSCA server with the
 
 ## Supported Platforms
 
-- Debian Wheezy (7)
-- Debian Jessie (8)
-- Ubuntu Trusty (14.04)
+* Debian
+    - Wheezy    (7)
+    - Jessie    (8)
+* Ubuntu
+    - Trusty    (14.04)
 
 ## Example (Playbook)
 
