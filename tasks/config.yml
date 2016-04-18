@@ -1,5 +1,10 @@
 ---
 
+- name: Configure NSCA client
+  template: src=send_nsca.cfg.j2 dest={{ nsca_config_file }}
+        owner=root group=root mode=0644
+        backup=yes
+
 # Git
 - name: Clone NSCA client scripts repositories (Git)
   git:  repo={{ item.repo }}
