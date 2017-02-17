@@ -10,11 +10,11 @@
   git:  repo={{ item.repo }}
         dest={{ item.dest }}
         version={{ item.version | default('master') }}
-  with_items: nsca_scripts_repo_git
+  with_items: "{{ nsca_scripts_repo_git }}"
 
 - name: Register existing crontab files from repositories (Git)
   stat: path={{ item.dest }}/{{ item.crontab_src | default('crontab') }}
-  with_items: nsca_scripts_repo_git
+  with_items: "{{ nsca_scripts_repo_git }}"
   register: crontab_files_stat_git
 
 - name: Set the crontab files in /etc/cron.d if available (Git)
@@ -31,11 +31,11 @@
   hg:   repo={{ item.repo }}
         dest={{ item.dest }}
         revision={{ item.version | default('default') }}
-  with_items: nsca_scripts_repo_hg
+  with_items: "{{ nsca_scripts_repo_hg }}"
 
 - name: Register existing crontab files from repositories (Mercurial)
   stat: path={{ item.dest }}/{{ item.crontab_src | default('crontab') }}
-  with_items: nsca_scripts_repo_hg
+  with_items: "{{ nsca_scripts_repo_hg }}"
   register: crontab_files_stat_hg
 
 - name: Set the crontab files in /etc/cron.d if available (Mercurial)
@@ -43,6 +43,6 @@
         path=/etc/cron.d/{{ item.0.crontab_dest | default('nsca_checks') }}
         state=link
   with_together:
-      - nsca_scripts_repo_hg
-      - crontab_files_stat_hg.results
+      - "{{ nsca_scripts_repo_hg }}"
+      - "{{ crontab_files_stat_hg.results }}"
   when: nsca_scripts_repo_hg and item.1.stat.exists

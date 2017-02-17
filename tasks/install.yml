@@ -4,4 +4,4 @@
   apt:  pkg={{ item }}
         state=installed
         update_cache=yes
-  with_items: nagios_client_packages
+  with_items: "{{ nagios_client_packages }}"
